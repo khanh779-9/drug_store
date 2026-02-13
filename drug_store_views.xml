@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- ================= NHÀ CUNG CẤP ================= -->
+        <record id="view_drug_supplier_tree" model="ir.ui.view">
+            <field name="name">drug.supplier.tree</field>
+            <field name="model">drug.supplier</field>
+            <field name="arch" type="xml">
+                <tree string="Nhà cung cấp">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="phone"/>
+                    <field name="address"/>
+                    <field name="email"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_drug_supplier_form" model="ir.ui.view">
+            <field name="name">drug.supplier.form</field>
+            <field name="model">drug.supplier</field>
+            <field name="arch" type="xml">
+                <form string="Nhà cung cấp" version="7.0">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Tên nhà cung cấp..."/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="phone"/>
+                            </group>
+                            <group>
+                                <field name="email"/>
+                                <field name="address"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Ghi chú">
+                                <field name="note" placeholder="Ghi chú..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ================= LOẠI THUỐC ================= -->
+        <record id="view_drug_type_tree" model="ir.ui.view">
+            <field name="name">drug.type.tree</field>
+            <field name="model">drug.type</field>
+            <field name="arch" type="xml">
+                <tree string="Loại thuốc"><field name="code"/><field name="name"/><field name="description"/></tree>
+            </field>
+        </record>
+
+        <record id="view_drug_type_form" model="ir.ui.view">
+            <field name="name">drug.type.form</field>
+            <field name="model">drug.type</field>
+            <field name="arch" type="xml">
+                <form string="Loại thuốc" version="7.0">
+                    <sheet>
+                        <group><field name="code"/><field name="name"/></group>
+                        <field name="description" placeholder="Mô tả..."/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ================= THUỐC ================= -->
+        <record id="view_drug_item_tree" model="ir.ui.view">
+            <field name="name">drug.item.tree</field>
+            <field name="model">drug.item</field>
+            <field name="arch" type="xml">
+                <tree string="Thuốc">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="type_id"/>
+                    <field name="supplier_id"/>
+                    <field name="manufacturer"/>
+                    <field name="unit"/>
+                    <field name="price"/>
+                    <field name="stock"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_drug_item_form" model="ir.ui.view">
+            <field name="name">drug.item.form</field>
+            <field name="model">drug.item</field>
+            <field name="arch" type="xml">
+                <form string="Thuốc" version="7.0">
+                    <sheet>
+                        <field name="image" widget="image" class="oe_avatar oe_left"/>
+                        <div class="oe_title">
+                            <h1><field name="name" placeholder="Tên thuốc..."/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="type_id"/>
+                                <field name="supplier_id"/>
+                                <field name="manufacturer"/>
+                            </group>
+                            <group>
+                                <field name="unit"/>
+                                <field name="price"/>
+                                <field name="stock"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Mô tả chi tiết">
+                                <field name="description"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ================= HÓA ĐƠN BÁN ================= -->
+        <record id="view_drug_receipt_tree" model="ir.ui.view">
+            <field name="name">drug.receipt.tree</field>
+            <field name="model">drug.receipt</field>
+            <field name="arch" type="xml">
+                <tree string="Hóa đơn bán">
+                    <field name="customer_name"/>
+                    <field name="customer_phone"/>
+                    <field name="date"/>
+                    <field name="total_amount"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_drug_receipt_form" model="ir.ui.view">
+            <field name="name">drug.receipt.form</field>
+            <field name="model">drug.receipt</field>
+            <field name="arch" type="xml">
+                <form string="Hóa đơn bán" version="7.0">
+                    <header>
+                        <button name="action_confirm" string="Xác nhận bán" type="object" states="draft" class="oe_highlight"/>
+                        <button name="action_done" string="Hoàn tất" type="object" states="confirmed" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group string="Khách hàng">
+                                <field name="customer_name" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <field name="customer_phone" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <field name="customer_address" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            </group>
+                            <group string="Thông tin">
+                                <field name="date" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <field name="total_amount"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Chi tiết hóa đơn">
+                                <field name="receipt_line_ids" nolabel="1" attrs="{'readonly': [('state','!=','draft')]}">
+                                    <tree editable="bottom">
+                                        <field name="item_id" on_change="onchange_item_id(item_id)"/>
+                                        <field name="quantity" on_change="onchange_quantity(quantity, price_unit)"/>
+                                        <field name="price_unit" on_change="onchange_quantity(quantity, price_unit)"/>
+                                        <field name="subtotal"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ================= HÓA ĐƠN NHẬP ================= -->
+        <record id="view_drug_import_receipt_tree" model="ir.ui.view">
+            <field name="name">drug.import.receipt.tree</field>
+            <field name="model">drug.import.receipt</field>
+            <field name="arch" type="xml">
+                <tree string="Hóa đơn nhập">
+                    <field name="supplier_id"/>
+                    <field name="supplier_phone"/>
+                    <field name="date"/>
+                    <field name="total_amount"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_drug_import_receipt_form" model="ir.ui.view">
+            <field name="name">drug.import.receipt.form</field>
+            <field name="model">drug.import.receipt</field>
+            <field name="arch" type="xml">
+                <form string="Hóa đơn nhập" version="7.0">
+                    <header>
+                        <button name="action_confirm" string="Xác nhận nhập" type="object" states="draft" class="oe_highlight"/>
+                        <button name="action_done" string="Hoàn tất" type="object" states="confirmed" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group string="Nhà cung cấp">
+                                <field name="supplier_id" on_change="onchange_supplier_id(supplier_id)" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <field name="supplier_phone" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <field name="supplier_address" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            </group>
+                            <group string="Thông tin">
+                                <field name="date" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <field name="total_amount"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Chi tiết nhập hàng">
+                                <field name="import_line_ids" nolabel="1" attrs="{'readonly': [('state','!=','draft')]}">
+                                    <tree editable="bottom">
+                                        <field name="item_id" on_change="onchange_item_id(item_id)"/>
+                                        <field name="quantity" on_change="onchange_quantity(quantity, price_unit)"/>
+                                        <field name="price_unit" on_change="onchange_quantity(quantity, price_unit)"/>
+                                        <field name="subtotal"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ================= ACTIONS ================= -->
+        <record id="act_add_supplier" model="ir.actions.act_window"><field name="name">Thêm nhà cung cấp</field><field name="res_model">drug.supplier</field><field name="view_mode">form</field></record>
+        <record id="act_list_supplier" model="ir.actions.act_window"><field name="name">Danh sách nhà cung cấp</field><field name="res_model">drug.supplier</field><field name="view_mode">tree,form</field></record>
+        <record id="act_add_drug_type" model="ir.actions.act_window"><field name="name">Thêm loại thuốc</field><field name="res_model">drug.type</field><field name="view_mode">form</field></record>
+        <record id="act_list_drug_type" model="ir.actions.act_window"><field name="name">Danh sách loại thuốc</field><field name="res_model">drug.type</field><field name="view_mode">tree,form</field></record>
+        <record id="act_add_drug_item" model="ir.actions.act_window"><field name="name">Thêm thuốc</field><field name="res_model">drug.item</field><field name="view_mode">form</field></record>
+        <record id="act_list_drug_item" model="ir.actions.act_window"><field name="name">Danh sách thuốc</field><field name="res_model">drug.item</field><field name="view_mode">tree,form</field></record>
+        <record id="act_receipt_new" model="ir.actions.act_window"><field name="name">Tạo hóa đơn bán</field><field name="res_model">drug.receipt</field><field name="view_mode">form</field></record>
+        <record id="act_receipt_list" model="ir.actions.act_window"><field name="name">Danh sách hóa đơn bán</field><field name="res_model">drug.receipt</field><field name="view_mode">tree,form</field></record>
+        <record id="act_receipt_confirmed" model="ir.actions.act_window"><field name="name">Đã xác nhận</field><field name="res_model">drug.receipt</field><field name="domain">[('state','=','confirmed')]</field><field name="view_mode">tree,form</field></record>
+        <record id="act_import_new" model="ir.actions.act_window"><field name="name">Tạo hóa đơn nhập</field><field name="res_model">drug.import.receipt</field><field name="view_mode">form</field></record>
+        <record id="act_import_list" model="ir.actions.act_window"><field name="name">Danh sách hóa đơn nhập</field><field name="res_model">drug.import.receipt</field><field name="view_mode">tree,form</field></record>
+        <record id="act_import_confirmed" model="ir.actions.act_window"><field name="name">Đã xác nhận</field><field name="res_model">drug.import.receipt</field><field name="domain">[('state','=','confirmed')]</field><field name="view_mode">tree,form</field></record>
+
+        <!-- ================= MENU ================= -->
+        <menuitem id="menu_drugstore_root" name="QUẢN LÝ TIỆM THUỐC" sequence="10"/>
+
+        <menuitem id="menu_supplier" name="Nhà cung cấp" parent="menu_drugstore_root" sequence="1"/>
+            <menuitem id="m_add_supplier" name="Thêm nhà cung cấp" parent="menu_supplier" action="act_add_supplier" sequence="1"/>
+            <menuitem id="m_list_supplier" name="Danh sách nhà cung cấp" parent="menu_supplier" action="act_list_supplier" sequence="2"/>
+
+        <menuitem id="menu_drug_type" name="Loại thuốc" parent="menu_drugstore_root" sequence="2"/>
+            <menuitem id="m_add_type" name="Thêm loại thuốc" parent="menu_drug_type" action="act_add_drug_type" sequence="1"/>
+            <menuitem id="m_list_type" name="Danh sách loại thuốc" parent="menu_drug_type" action="act_list_drug_type" sequence="2"/>
+
+        <menuitem id="menu_drug_item" name="Thuốc" parent="menu_drugstore_root" sequence="3"/>
+            <menuitem id="m_add_item" name="Thêm thuốc" parent="menu_drug_item" action="act_add_drug_item" sequence="1"/>
+            <menuitem id="m_list_item" name="Danh sách thuốc" parent="menu_drug_item" action="act_list_drug_item" sequence="2"/>
+
+        <menuitem id="menu_drug_receipt" name="Hóa đơn bán" parent="menu_drugstore_root" sequence="4"/>
+            <menuitem id="m_receipt_new" name="Tạo hóa đơn bán" parent="menu_drug_receipt" action="act_receipt_new" sequence="1"/>
+            <menuitem id="m_receipt_list" name="Tất cả hóa đơn bán" parent="menu_drug_receipt" action="act_receipt_list" sequence="2"/>
+            <menuitem id="m_receipt_confirmed" name="Đã xác nhận" parent="menu_drug_receipt" action="act_receipt_confirmed" sequence="3"/>
+
+        <menuitem id="menu_drug_import" name="Hóa đơn nhập" parent="menu_drugstore_root" sequence="5"/>
+            <menuitem id="m_import_new" name="Tạo hóa đơn nhập" parent="menu_drug_import" action="act_import_new" sequence="1"/>
+            <menuitem id="m_import_list" name="Tất cả hóa đơn nhập" parent="menu_drug_import" action="act_import_list" sequence="2"/>
+            <menuitem id="m_import_confirmed" name="Đã xác nhận" parent="menu_drug_import" action="act_import_confirmed" sequence="3"/>
+
+    </data>
+</openerp>
